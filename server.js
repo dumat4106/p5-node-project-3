@@ -9,6 +9,8 @@ var io = socket(server);
 
 var playerCount = 0;
 
+var users = {};
+
 
 //creates object for users 
 function User(socketId) {
@@ -36,14 +38,16 @@ io.sockets.on('connection', newConnection);
 function newConnection(socket) {
 
     var user = new User(socket.id);
+    users[socket.id] = user;
     playerCount++;
+    var usernameString = user.getUsername();
 
-    
-    socket.on('usernames', setUsername);
+    console.log("Assigned username: " + usernameString);
 
-    function setUsername() {
-        socket.emit('usernames', user.getUsername());
-    }
+    setTimeout(() => {
+        socket.emit('usernames', usernameString);
+    }, 300);
+
     
     socket.on('mouse', mouseMsg);
 
