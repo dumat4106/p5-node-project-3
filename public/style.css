@@ -1,0 +1,50 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color:#cac8dc;
+}
+
+canvas {
+  display: block;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+#total-canvas {
+  width: 500px;
+  height: 700px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;
+
+  gap: 20px;
+
+}
+
+.top-bar {
+  width: 500px;
+  height: 100px;
+  background-color:#F2F2F2;
+}
+
+#drawing-canvas {
+  width: 500px;
+  height: 500px;
+}
+
+#effect-output {
+  width: 500px;
+  height: 500px; 
+}
+
+#effect-output canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}

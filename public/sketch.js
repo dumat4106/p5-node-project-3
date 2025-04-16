@@ -1,7 +1,9 @@
 var socket;
+var completedImage;
+
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(500, 500).parent("drawing-canvas");
   background(51);
 
   socket = io.connect('http://localhost:3000');
@@ -28,4 +30,18 @@ function mouseDragged() {
 }
 
 function draw() {
+}
+
+function getImage() {
+
+  completedImage = get();
+
+  //document.body.removeChild(document.getElementById("total-canvas"));  // Safely remove if it exists
+  
+  //adds div to show image
+  let effectContainer = document.createElement("div");
+  effectContainer.setAttribute("id", "effect-output");
+  document.body.appendChild(effectContainer);
+
+  startParticleEffect(completedImage, "effect-output");
 }
