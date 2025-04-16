@@ -10,13 +10,12 @@ let startParticleEffect = (inputImage, elementId) => {
       };
   
       p.setup = () => {
-        const container = document.getElementById(elementId);
-        const w = container.offsetWidth;
-        const h = container.offsetHeight;
+        let container = document.getElementById(elementId);
+        let w = container.offsetWidth;
+        let h = container.offsetHeight;
       
         p.createCanvas(w, h).parent(container);
-        p.pixelDensity(1); // prevents retina mismatch issues
-        img.resize(w, h);
+        img.resize(2*w, 2*h);
         img.loadPixels();
       
         particles.push(new Particle(w / 2, h / 2, img.get(w / 2, h / 2), w));
@@ -24,9 +23,6 @@ let startParticleEffect = (inputImage, elementId) => {
   
       p.draw = () => {
         p.background("white");
-
-        
-        image(img, 0, 0, w, h);
 
         particlesToAdd = [];
         particlesToRemove = [];

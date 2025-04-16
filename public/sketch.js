@@ -1,13 +1,33 @@
 var socket;
 var completedImage;
+var userNumber;
+var playerNumber;
 
 
 function setup() {
   createCanvas(500, 500).parent("drawing-canvas");
   background(51);
 
+
   socket = io.connect('http://localhost:3000');
   socket.on('mouse', newDrawing);
+
+  //display username
+  socket.on('usernames', (playerNumber) => {
+    userNumber = playerNumber;
+    const usernameElement = document.getElementById("username");
+    
+    if (usernameElement) {
+      usernameElement.innerText = "You are " + userNumber;
+      console.log("Username set to:", userNumber);
+    } else {
+      console.error("Username element not found");
+    }
+  });
+
+  socket.on('connect', () => {
+    console.log("Connected to server with ID:", socket.id); // ✅ Should appear
+  });
 }
 
 function newDrawing(data) {
