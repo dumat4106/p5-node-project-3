@@ -8,6 +8,7 @@ let userStrokes = {};
 let currentViewIndex = 0;
 let userIds = [];
 
+let currentColor;
 
 function setup() {
   createCanvas(500, 500).parent("drawing-canvas");
@@ -131,4 +132,25 @@ function nextUser() {
   currentViewIndex = (currentViewIndex + 1) % userIds.length;
   console.log(currentViewIndex);
   showUserDrawing(currentViewIndex);
+}
+
+//when user clicks on color wheel
+function showColorOverlay() {
+
+  let colorOverlay = document.createElement("div");
+  colorOverlay.setAttribute("id", "color-overlay");
+  document.body.appendChild(colorOverlay);
+
+  let colorGradient = document.createElement("div");
+  colorGradient.setAttribute("id", "color-gradient");
+  colorOverlay.appendChild(colorGradient);
+
+  let hoveredColor = document.createElement("div");
+  hoveredColor.setAttribute("id", "hovered-color");
+  colorOverlay.appendChild(hoveredColor);
+
+  let brightnessToggle = document.createElement("div");
+  brightnessToggle.setAttribute("id", "brightness-toggle");
+  colorOverlay.appendChild(brightnessToggle);
+
 }

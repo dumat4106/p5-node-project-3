@@ -6,10 +6,15 @@ var server = app.listen(3000);
 app.use(express.static('public'));
 var socket = require('socket.io');
 var io = socket(server);
+const path = require('path');
+
 
 var playerCount = 0;
 
 var users = {};
+
+app.use(express.static(__dirname));
+app.use('/Images', express.static(path.join(__dirname, 'Images')));
 
 
 //creates object for users 
