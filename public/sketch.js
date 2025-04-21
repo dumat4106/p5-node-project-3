@@ -14,7 +14,7 @@ function setup() {
   createCanvas(500, 500).parent("drawing-canvas");
   background(251);
 
-  socket = io.connect('http://localhost:3000');
+  socket = io.connect('http://10.232.145.117:3000');
   socket.on('mouse', newDrawing);
 
   socket.on('connect', () => {
@@ -133,6 +133,8 @@ function nextUser() {
   console.log(currentViewIndex);
   showUserDrawing(currentViewIndex);
 }
+
+//COLOR FUNCTION
 
 //when user clicks on color wheel
 function showColorOverlay() {

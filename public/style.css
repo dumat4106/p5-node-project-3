@@ -118,8 +118,8 @@ body {
 }
 
 #color-gradient {
-  width: 50%;
-  height: 100px;
+  width: 350px;
+  height: auto;
   background-image: url("../Images/Color_gradient.png");
 }
 
