@@ -9,10 +9,21 @@ let currentViewIndex = 0;
 let userIds = [];
 
 let currentColor;
+let hoveredColor;
+let tempCanvas;
+let gradientImage;
+
+function preload() {
+  gradientImage = loadImage('Images/Color_gradient.png');
+}
 
 function setup() {
   createCanvas(500, 500).parent("drawing-canvas");
   background(251);
+
+  tempCanvas = createGraphics(350, 350);
+  tempCanvas.background(0, 0);
+  tempCanvas.image(gradientImage, 0, 0, 350, 350);
 
   socket = io.connect('http://10.232.145.117:3000');
   socket.on('mouse', newDrawing);
@@ -67,9 +78,16 @@ function mouseDragged() {
   userStrokes[userNumber].push({ x: mouseX, y: mouseY });
 }
 
-function draw() {
-  //display username
+function mouseMoved() {
 
+  hoveredColor = tempCanvas.get(mouseX, mouseY);
+  tempCanvas.clear();
+  tempCanvas.noStroke();
+  tempCanvas.fill(hoveredColor);
+  tempCanvas.ellipse(mouseX - 20, mouseY -20, 30, 30);
+}
+
+function draw() {
 }
 
 function getImage() {
@@ -143,9 +161,10 @@ function showColorOverlay() {
   colorOverlay.setAttribute("id", "color-overlay");
   document.body.appendChild(colorOverlay);
 
-  let colorGradient = document.createElement("div");
-  colorGradient.setAttribute("id", "color-gradient");
-  colorOverlay.appendChild(colorGradient);
+  let tempCanvasElt = tempCanvas.elt;
+  tempCanvasElt.setAttribute("id", "temp-canvas");
+  tempCanvasElt.style.display = "block";
+  colorOverlay.appendChild(tempCanvasElt);
 
   let hoveredColor = document.createElement("div");
   hoveredColor.setAttribute("id", "hovered-color");

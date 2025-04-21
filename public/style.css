@@ -112,17 +112,28 @@ body {
 #color-overlay {
   width: 400px;
   height: 400px;
-  position: fixed;
+  
+  position: absolute; 
+  top: 200px;
 
   display: flex;
+  background-color:antiquewhite;
 }
 
+#temp-canvas {
+  display: block;
+  position: absolute;
+  width: 350px;
+  height: 350px;
+}
+
+/*
 #color-gradient {
   width: 350px;
-  height: auto;
+  height: 350px;
   background-image: url("../Images/Color_gradient.png");
 }
-
+*/
 #hovered-color {
 
 }
