@@ -9,9 +9,15 @@ let currentViewIndex = 0;
 let userIds = [];
 
 let currentColor;
-let hoveredColor;
+let mouseColor;
 let tempCanvas;
 let gradientImage;
+let hoveredColor;
+
+let pickerX = 25;
+let pickerY = 25;
+let dragging = false;
+let pickerRadius = 15;
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
@@ -22,10 +28,16 @@ function setup() {
   background(251);
 
   tempCanvas = createGraphics(350, 350);
-  tempCanvas.background(0, 0);
-  tempCanvas.image(gradientImage, 0, 0, 350, 350);
+  tempCanvas.background(51);
+  if (gradientImage) {
+    tempCanvas.image(gradientImage, 0, 0);
 
-  socket = io.connect('http://10.232.145.117:3000');
+    console.log("image loaded!");
+  } else {
+    console.log("gradientImage not loaded!");
+  }
+
+  socket = io.connect('http://localhost:3000');
   socket.on('mouse', newDrawing);
 
   socket.on('connect', () => {
@@ -78,17 +90,59 @@ function mouseDragged() {
   userStrokes[userNumber].push({ x: mouseX, y: mouseY });
 }
 
+/*
 function mouseMoved() {
-
-  hoveredColor = tempCanvas.get(mouseX, mouseY);
+  
+  mouseColor = tempCanvas.get(mouseX, mouseY);
   tempCanvas.clear();
-  tempCanvas.noStroke();
-  tempCanvas.fill(hoveredColor);
-  tempCanvas.ellipse(mouseX - 20, mouseY -20, 30, 30);
+  tempCanvas.image(gradientImage, 0, 0);
+  tempCanvas.stroke(255);
+  tempCanvas.strokeWeight(2.5);
+  tempCanvas.fill(mouseColor);
+  tempCanvas.ellipse(mouseX + 30, mouseY + 30, 30, 30);
+
+  if (hoveredColor) {
+    hoveredColor.style.backgroundColor = colorToCSS(mouseColor);
+  }
+}
+  */
+
+function colorToCSS(c) {
+  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
 }
 
 function draw() {
+  tempCanvas.clear();
+  tempCanvas.image(gradientImage, 0, 0); // draw your gradient
+
+  if (dragging) {
+    pickerX = constrain(mouseX, 0, tempCanvas.width);
+    pickerY = constrain(mouseY, 0, tempCanvas.height);
+  }
+
+  tempCanvas.fill(255, 0, 0, 0);
+  tempCanvas.stroke(0);
+  tempCanvas.strokeWeight(2);
+  tempCanvas.ellipse(pickerX, pickerY, pickerRadius * 2);
+
+  let c = tempCanvas.get(pickerX, pickerY);
+
+  if (hoveredColor) {
+    hoveredColor.style.backgroundColor = colorToCSS(c);
+  }
+
 }
+
+function mousePressed(){
+  if (dist(mouseX, mouseY, pickerX, pickerY) < pickerRadius) {
+    dragging = true;
+  }
+}
+
+function mouseReleased() {
+  dragging = false;
+}
+
 
 function getImage() {
 
@@ -159,19 +213,20 @@ function showColorOverlay() {
 
   let colorOverlay = document.createElement("div");
   colorOverlay.setAttribute("id", "color-overlay");
-  document.body.appendChild(colorOverlay);
+  document.getElementById("drawing-canvas").appendChild(colorOverlay);
 
   let tempCanvasElt = tempCanvas.elt;
   tempCanvasElt.setAttribute("id", "temp-canvas");
   tempCanvasElt.style.display = "block";
   colorOverlay.appendChild(tempCanvasElt);
 
-  let hoveredColor = document.createElement("div");
+  hoveredColor = document.createElement("div");
   hoveredColor.setAttribute("id", "hovered-color");
   colorOverlay.appendChild(hoveredColor);
 
   let brightnessToggle = document.createElement("div");
   brightnessToggle.setAttribute("id", "brightness-toggle");
   colorOverlay.appendChild(brightnessToggle);
+
 
 }

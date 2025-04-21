@@ -110,13 +110,15 @@ body {
 }
 
 #color-overlay {
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 375px;
   
   position: absolute; 
-  top: 200px;
+  top: 170px;
+  left: 88px;
 
   display: flex;
+  flex-direction: column;
   background-color:antiquewhite;
 }
 
@@ -125,6 +127,8 @@ body {
   position: absolute;
   width: 350px;
   height: 350px;
+
+  background-color: rgb(255, 255, 255);
 }
 
 /*
@@ -135,7 +139,11 @@ body {
 }
 */
 #hovered-color {
+  position: absolute; 
+  height: 350px;
+  width: 50px;
 
+  right: 75px;
 }
 
 #brightness-toggle {
