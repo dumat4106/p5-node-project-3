@@ -41,6 +41,8 @@ main {
 }
 
 #drawing-canvas {
+  
+  position: relative;
   width: 500px;
   height: 500px;
 }
@@ -114,8 +116,8 @@ body {
   height: 375px;
   
   position: absolute; 
-  top: 170px;
-  left: 88px;
+  top: 0px;
+  left: 0px;
 
   display: flex;
   flex-direction: column;
