@@ -13,6 +13,7 @@ let mouseColor;
 let tempCanvas;
 let gradientImage;
 let hoveredColor;
+let brightnessValue = 1;
 
 let pickerX = 25;
 let pickerY = 25;
@@ -37,7 +38,7 @@ function setup() {
     console.log("gradientImage not loaded!");
   }
 
-  socket = io.connect('http://localhost:3000');
+  socket = io.connect('http://172.27.184.147:3000');
   socket.on('mouse', newDrawing);
 
   socket.on('connect', () => {
@@ -125,10 +126,33 @@ function draw() {
   tempCanvas.strokeWeight(2);
   tempCanvas.ellipse(pickerX, pickerY, pickerRadius * 2);
 
-  let c = tempCanvas.get(pickerX, pickerY);
+  let c = tempCanvas.get(pickerX, pickerY); // Original color
+  let baseColor = color(c);
+  updateBrightnessSliderGradient(baseColor); 
+  
+  // Get RGB values
+  let r = red(baseColor);
+  let g = green(baseColor);
+  let b = blue(baseColor);
+  
+  // Linearly interpolate toward white (255, 255, 255)
+  let bright = brightnessValue; // 0 to 2
+  if (bright > 1) {
+    let t = map(bright, 1, 2, 0, 1); // how close we are to full white
+    r = lerp(r, 255, t);
+    g = lerp(g, 255, t);
+    b = lerp(b, 255, t);
+  } else {
+    r *= bright;
+    g *= bright;
+    b *= bright;
+  }
+  
+  let adjustedColor = color(r, g, b);
+  
 
   if (hoveredColor) {
-    hoveredColor.style.backgroundColor = colorToCSS(c);
+    hoveredColor.style.backgroundColor = colorToCSS([r, g, b]);
   }
 
 }
@@ -224,9 +248,29 @@ function showColorOverlay() {
   hoveredColor.setAttribute("id", "hovered-color");
   colorOverlay.appendChild(hoveredColor);
 
-  let brightnessToggle = document.createElement("div");
-  brightnessToggle.setAttribute("id", "brightness-toggle");
-  colorOverlay.appendChild(brightnessToggle);
+  let brightnessSlider = document.createElement("input");
+  brightnessSlider.setAttribute("type", "range");
+  brightnessSlider.setAttribute("min", "0");
+  brightnessSlider.setAttribute("max", "2");
+  brightnessSlider.setAttribute("step", "0.01");
+  brightnessSlider.setAttribute("value", "1"); // Default brightness
+  brightnessSlider.setAttribute("id", "brightness-slider");
+  colorOverlay.appendChild(brightnessSlider);
+  
+  brightnessSlider.addEventListener("input", () => {
+    brightnessValue = parseFloat(brightnessSlider.value);
+  });
+}
 
+function updateBrightnessSliderGradient(baseColor) {
+  let r = red(baseColor);
+  let g = green(baseColor);
+  let b = blue(baseColor);
 
+  let css = `linear-gradient(to right, rgb(0, 0, 0), rgb(${r}, ${g}, ${b}), rgb(255, 255, 255))`;
+
+  let slider = document.getElementById("brightness-slider");
+  if (slider) {
+    slider.style.background = css;
+  }
 }
