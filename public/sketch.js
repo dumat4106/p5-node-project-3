@@ -3,12 +3,15 @@ var completedImage;
 var userNumber;
 var playerNumber;
 
+let isColorOverlayOpen = false;
+
 //for the user functionality 
 let userStrokes = {}; 
 let currentViewIndex = 0;
 let userIds = [];
 
 let currentColor;
+let colorOverlay;
 let mouseColor;
 let tempCanvas;
 let gradientImage;
@@ -19,6 +22,8 @@ let pickerX = 25;
 let pickerY = 25;
 let dragging = false;
 let pickerRadius = 15;
+
+let isErasing = false;
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
@@ -38,7 +43,7 @@ function setup() {
     console.log("gradientImage not loaded!");
   }
 
-  socket = io.connect('http://172.27.184.147:3000');
+  socket = io.connect('http://localhost:3000');
   socket.on('mouse', newDrawing);
 
   socket.on('connect', () => {
@@ -57,6 +62,18 @@ function setup() {
       console.error("Username element not found");
     }
   });
+
+  socket.on("erase", (data) => {
+    const { x, y, user, radius } = data;
+  
+    if (userStrokes[user]) {
+      userStrokes[user] = userStrokes[user].filter(stroke => {
+        return dist(x, y, stroke.x, stroke.y) > radius;
+      });
+  
+      redrawAllStrokes();
+    }
+  });
 }
 
 function newDrawing(data) {
@@ -72,41 +89,47 @@ function newDrawing(data) {
 }
 
 function mouseDragged() {
-  
-  var data = {
+
+  if (isColorOverlayOpen) return;
+  const eraseRadius = 20;
+
+  if (isErasing) {
+    // Only erase your own strokes
+    userStrokes[userNumber] = userStrokes[userNumber].filter(stroke => {
+      return dist(mouseX, mouseY, stroke.x, stroke.y) > 20; // adjust radius
+    });
+
+    // Emit erase to others
+  socket.emit("erase", {
     x: mouseX,
     y: mouseY,
-    user: userNumber
-  }
-  socket.emit('mouse', data);
+    user: userNumber,
+    radius: eraseRadius
+  });
 
-  noStroke();
-  fill(55);
-  ellipse(mouseX, mouseY, 36, 36);
+  redrawAllStrokes();
 
-  // also save locally
-  if (!userStrokes[userNumber]) {
-    userStrokes[userNumber] = [];
-  }
-  userStrokes[userNumber].push({ x: mouseX, y: mouseY });
+  } else {
+      var data = {
+        x: mouseX,
+        y: mouseY,
+        user: userNumber
+      }
+      socket.emit('mouse', data);
+    
+      noStroke();
+      fill(55);
+      ellipse(mouseX, mouseY, 36, 36);
+    
+      // also save locally
+      if (!userStrokes[userNumber]) {
+        userStrokes[userNumber] = [];
+      }
+      userStrokes[userNumber].push({ x: mouseX, y: mouseY });
+    }
 }
 
-/*
-function mouseMoved() {
-  
-  mouseColor = tempCanvas.get(mouseX, mouseY);
-  tempCanvas.clear();
-  tempCanvas.image(gradientImage, 0, 0);
-  tempCanvas.stroke(255);
-  tempCanvas.strokeWeight(2.5);
-  tempCanvas.fill(mouseColor);
-  tempCanvas.ellipse(mouseX + 30, mouseY + 30, 30, 30);
 
-  if (hoveredColor) {
-    hoveredColor.style.backgroundColor = colorToCSS(mouseColor);
-  }
-}
-  */
 
 function colorToCSS(c) {
   return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
@@ -158,8 +181,10 @@ function draw() {
 }
 
 function mousePressed(){
-  if (dist(mouseX, mouseY, pickerX, pickerY) < pickerRadius) {
-    dragging = true;
+  if (isColorOverlayOpen) {
+    if (dist(mouseX, mouseY, pickerX, pickerY) < pickerRadius) {
+      dragging = true;
+    }
   }
 }
 
@@ -199,8 +224,6 @@ function getImage() {
   showUserDrawing(currentViewIndex);
 }
 
-
-
 function showUserDrawing(index) {
   clear();
   background(51);
@@ -234,8 +257,9 @@ function nextUser() {
 
 //when user clicks on color wheel
 function showColorOverlay() {
+  isColorOverlayOpen = true;
 
-  let colorOverlay = document.createElement("div");
+  colorOverlay = document.createElement("div");
   colorOverlay.setAttribute("id", "color-overlay");
   document.getElementById("drawing-canvas").appendChild(colorOverlay);
 
@@ -260,6 +284,12 @@ function showColorOverlay() {
   brightnessSlider.addEventListener("input", () => {
     brightnessValue = parseFloat(brightnessSlider.value);
   });
+
+  let closeButton = document.createElement("button");
+  closeButton.setAttribute("id", "close-button"); 
+  closeButton.textContent = "Close";
+  closeButton.addEventListener("click", closeColorOverlay);
+  colorOverlay.appendChild(closeButton);
 }
 
 function updateBrightnessSliderGradient(baseColor) {
@@ -272,5 +302,35 @@ function updateBrightnessSliderGradient(baseColor) {
   let slider = document.getElementById("brightness-slider");
   if (slider) {
     slider.style.background = css;
+  }
+}
+
+function closeColorOverlay() {
+  // Save current picker and brightness state
+  localStorage.setItem("pickerX", pickerX);
+  localStorage.setItem("pickerY", pickerY);
+  localStorage.setItem("brightness", brightnessValue);
+
+  if (colorOverlay && colorOverlay.parentNode) {
+    colorOverlay.parentNode.removeChild(colorOverlay);
+    colorOverlay = null; // Clear the reference
+  }
+
+  isColorOverlayOpen = false;
+}
+
+function eraseMode() {
+  isErasing = !isErasing;
+}
+
+function redrawAllStrokes() {
+  clear();
+  background(251); // your background color
+  for (let user in userStrokes) {
+    for (let s of userStrokes[user]) {
+      fill(55);
+      noStroke();
+      ellipse(s.x, s.y, 36, 36);
+    }
   }
 }

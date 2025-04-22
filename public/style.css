@@ -113,7 +113,7 @@ body {
 
 #color-overlay {
   width: 500px;
-  height: 375px;
+  height: 385px;
   
   position: absolute; 
   top: 0px;
@@ -169,4 +169,16 @@ body {
   background: #fff;
   border: 1px solid #999;
   cursor: pointer;
+}
+
+#close-button { 
+  position: absolute;
+  bottom: 10px;
+  right: 230px;
+  width: 40px;
+  height: 20px;
+}
+
+#color-wheel {
+  width: 200px;
 }
