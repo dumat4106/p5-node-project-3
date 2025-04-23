@@ -40,6 +40,8 @@ let brushOne, brushTwo, brushThree, brushFour;
 
 let playerView;
 
+let showAllColors = false;
+
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
@@ -106,7 +108,17 @@ function newDrawing(data) {
   });
 
   noStroke();
-  fill(data.color, 255 * data.pressure); 
+
+  //comment out for normal drawing
+   // Show current user's drawings in color, others in grey
+   if (data.user === userNumber) {
+    fill(data.color, 255 * data.pressure);
+  } else {
+    fill(150, 150, 150, 255 * data.pressure); // Grey color
+  }
+
+  //uncomment for normal drawing
+  //fill(data.color, 255 * data.pressure); 
   ellipse(data.x, data.y, brushSize * data.pressure + 10, brushSize * data.pressure + 10);
 }
 
@@ -168,7 +180,7 @@ function mouseDragged() {
       if (!currentStroke) currentStroke = [];
 
       currentStroke.push({ x, y, pressure, color: adjustedColor.levels });
-      //userStrokes[userNumber].push(strokeData);
+      userStrokes[userNumber].push(strokeData);
     }
   }
 
@@ -297,7 +309,18 @@ function undoLastStroke() {
 
 function getImage() {
 
+  // Create a temporary flag to show all colors
+  let previousShowAllColors = showAllColors; // Save current state
+  showAllColors = true; // Force show all colors
+  
+  // Redraw everything with original colors
+  redrawAllStrokes();
+  
+  // Capture the image with all colors
   completedImage = get();
+  
+  // Restore the previous state
+  showAllColors = previousShowAllColors;
 
   let overlay = document.createElement("div");
   overlay.setAttribute("id", "overlay");
@@ -469,13 +492,50 @@ function eraseMode() {
 function redrawAllStrokes() {
   clear();
   background(251);
+  
   for (let user in userStrokes) {
-    for (let s of userStrokes[user]) {
-      let p = s.pressure || 1;
-      let strokeColor = color(s.color[0], s.color[1], s.color[2]); // Convert stored RGB values to a color
-      fill(strokeColor, 255 * p);
+    // Skip if no strokes for this user
+    //if (!userStrokes[user] || !Array.isArray(userStrokes[user])) continue;
+    
+    for (let stroke of userStrokes[user]) {
+      // Skip if stroke is invalid
+      if (!stroke || typeof stroke !== 'object') continue;
+      
+      // Default values
+      let p = stroke.pressure || 1;
+      let x = stroke.x || 0;
+      let y = stroke.y || 0;
       noStroke();
-      ellipse(s.x, s.y, brushSize * p + 10, brushSize * p + 10);
+      
+      // Handle color - three possible cases:
+      // 1. Color exists as array [r,g,b]
+      // 2. Color exists as p5.js color object
+      // 3. Color is missing (use default grey)
+      let strokeColor;
+      try {
+        if (Array.isArray(stroke.color)) {
+          strokeColor = color(stroke.color[0], stroke.color[1], stroke.color[2]);
+        } else if (stroke.color && stroke.color.levels) {
+          strokeColor = color(stroke.color.levels[0], stroke.color.levels[1], stroke.color.levels[2]);
+        } else {
+          strokeColor = color(150, 150, 150); // Default grey
+        }
+      } catch (e) {
+        console.error("Error processing color:", e);
+        strokeColor = color(150, 150, 150); // Fallback to grey
+      }
+      
+      // Apply color based on view mode
+      if (showAllColors || user === userNumber) {
+        fill(strokeColor);
+      } else {
+        fill(150, 150, 150); // Grey for other users
+      }
+
+      // Draw with opacity based on pressure
+      drawingContext.globalAlpha = p;
+      ellipse(x, y, brushSize * p + 10, brushSize * p + 10);
+      drawingContext.globalAlpha = 1.0; // Reset
     }
   }
 }
