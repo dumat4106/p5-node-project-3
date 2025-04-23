@@ -21,6 +21,7 @@ let tempCanvas;
 let gradientImage;
 let hoveredColor;
 let brightnessValue = 1;
+let adjustedColor;
 
 let pickerX = 25;
 let pickerY = 25;
@@ -93,71 +94,22 @@ function setup() {
   });
 }
 
-/*
-function newDrawing(data) {
-
-  if (!userStrokes[data.user]) {
-    userStrokes[data.user] = [];
-  }
-  userStrokes[data.user].push({ x: data.x, y: data.y });
-
-  noStroke();
-  fill(55);
-  ellipse(data.x, data.y, 36, 36);
-}
-*/
 function newDrawing(data) {
   if (!userStrokes[data.user]) {
     userStrokes[data.user] = [];
   }
-  userStrokes[data.user].push(data);
-
-  noStroke();
-  fill(55, 255 * data.pressure); 
-  ellipse(data.x, data.y, brushSize * data.pressure + 10, brushSize * data.pressure + 10);
-}
-/*
-function mouseDragged() {
-
-  if (isColorOverlayOpen) return;
-  const eraseRadius = 20;
-
-  if (isErasing) {
-    // Only erase your own strokes
-    userStrokes[userNumber] = userStrokes[userNumber].filter(stroke => {
-      return dist(mouseX, mouseY, stroke.x, stroke.y) > 20; // adjust radius
-    });
-
-    // Emit erase to others
-  socket.emit("erase", {
-    x: mouseX,
-    y: mouseY,
-    user: userNumber,
-    radius: eraseRadius
+  userStrokes[data.user].push({
+    x: data.x,
+    y: data.y,
+    pressure: data.pressure,
+    color: data.color, // Store the color
   });
 
-  redrawAllStrokes();
-
-  } else {
-      var data = {
-        x: mouseX,
-        y: mouseY,
-        user: userNumber
-      }
-      socket.emit('mouse', data);
-    
-      noStroke();
-      fill(55);
-      ellipse(mouseX, mouseY, 36, 36);
-    
-      // also save locally
-      if (!userStrokes[userNumber]) {
-        userStrokes[userNumber] = [];
-      }
-      userStrokes[userNumber].push({ x: mouseX, y: mouseY });
-    }
+  noStroke();
+  fill(data.color, 255 * data.pressure); 
+  ellipse(data.x, data.y, brushSize * data.pressure + 10, brushSize * data.pressure + 10);
 }
-*/
+
 
 function mouseDragged() {
   if (isColorOverlayOpen) return;
@@ -171,6 +123,8 @@ function mouseDragged() {
 
   let pressure = map(speed, 0, 5, 1, 0);
   pressure = constrain(pressure, 0.1, 1);
+
+  let colorData = adjustedColor.levels;
 
   if (isErasing) {
     userStrokes[userNumber] = userStrokes[userNumber].filter(stroke => {
@@ -194,7 +148,7 @@ function mouseDragged() {
       p = pressure;
 
       noStroke();
-      fill(55, 255 * p);
+      fill(adjustedColor, 255 * p);
       ellipse(x, y, brushSize * p + 10, brushSize * p + 10);
 
       // Save the stroke
@@ -202,7 +156,8 @@ function mouseDragged() {
         x: x,
         y: y,
         user: userNumber,
-        pressure: p
+        pressure: p,
+        color: adjustedColor.levels, // Store color as RGB levels
       };
 
       socket.emit('mouse', strokeData);
@@ -212,8 +167,8 @@ function mouseDragged() {
       }
       if (!currentStroke) currentStroke = [];
 
-      currentStroke.push({ x, y, pressure });
-      userStrokes[userNumber].push(strokeData);
+      currentStroke.push({ x, y, pressure, color: adjustedColor.levels });
+      //userStrokes[userNumber].push(strokeData);
     }
   }
 
@@ -262,7 +217,7 @@ function draw() {
     b *= bright;
   }
   
-  let adjustedColor = color(r, g, b);
+  adjustedColor = color(r, g, b);
   
 
   if (hoveredColor) {
@@ -292,7 +247,7 @@ function mousePressed(){
   
     // Draw the dot
     noStroke();
-    fill(55, 255 * pressure);
+    fill(adjustedColor, 255 * pressure);
     ellipse(x, y, brushSize * pressure + 10, brushSize * pressure + 10);
   
     // Save the stroke
@@ -300,7 +255,8 @@ function mousePressed(){
       x: x,
       y: y,
       user: userNumber,
-      pressure: pressure
+      pressure: pressure,
+      color: adjustedColor.levels, // Store color as RGB levels
     };
   
     socket.emit('mouse', strokeData);
@@ -310,8 +266,8 @@ function mousePressed(){
     }
     if (!currentStroke) currentStroke = [];
   
-    currentStroke.push({ x, y, pressure });
-    userStrokes[userNumber].push(strokeData);
+    currentStroke.push({ x, y, pressure, color: adjustedColor.levels });
+    //userStrokes[userNumber].push(strokeData);
   
     // Update last mouse for next drag
     lastMouseX = mouseX;
@@ -327,7 +283,7 @@ function mouseReleased() {
     if (!userStrokes[userNumber]) {
       userStrokes[userNumber] = [];
     }
-    userStrokes[userNumber].push(currentStroke);
+    userStrokes[userNumber].push([...currentStroke]);
     currentStroke = [];
   }
 }
@@ -394,20 +350,31 @@ function showUserDrawing(index) {
   const strokes = userStrokes[userId];
 
   if (strokes) {
-    for (let s of strokes) {
-      ellipse(s.x, s.y, brushSize * p + 10, brushSize * p + 10);
+    // Handle both cases (array of strokes or array of arrays)
+    for (let stroke of strokes) {
+      // Check if this is a stroke object or an array of strokes
+      if (Array.isArray(stroke)) {
+        // Nested array case
+        for (let s of stroke) {
+          drawSingleStroke(s);
+        }
+      } else {
+        // Direct stroke object case
+        drawSingleStroke(stroke);
+      }
     }
   }
 
   playerView.textContent = "Viewing:" + userId;
 
-  /*
-  const usernameElement = document.getElementById("username");
-  if (usernameElement) {
-    usernameElement.innerText = "Viewing: " + userId;
-  }
-    */
+}
 
+function drawSingleStroke(stroke) {
+  let p = stroke.pressure || 1;
+  let strokeColor = color(stroke.color[0], stroke.color[1], stroke.color[2]);
+  fill(strokeColor, 255 * p);
+  noStroke();
+  ellipse(stroke.x, stroke.y, brushSize * p + 10, brushSize * p + 10);
 }
 
 function nextUser() {
@@ -499,27 +466,14 @@ function eraseMode() {
   }
 }
 
-/*
-function redrawAllStrokes() {
-  clear();
-  background(251); // your background color
-  for (let user in userStrokes) {
-    for (let s of userStrokes[user]) {
-      fill(55);
-      noStroke();
-      ellipse(s.x, s.y, 36, 36);
-    }
-  }
-}
-  */
-
 function redrawAllStrokes() {
   clear();
   background(251);
   for (let user in userStrokes) {
     for (let s of userStrokes[user]) {
       let p = s.pressure || 1;
-      fill(55, 255 * p);
+      let strokeColor = color(s.color[0], s.color[1], s.color[2]); // Convert stored RGB values to a color
+      fill(strokeColor, 255 * p);
       noStroke();
       ellipse(s.x, s.y, brushSize * p + 10, brushSize * p + 10);
     }
