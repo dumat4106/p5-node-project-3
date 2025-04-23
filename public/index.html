@@ -15,14 +15,13 @@
 
   <body>
       <header>
-        <p id="title">p5.paint</p>
         <p id="username">You are: </p>
       </header>
 
       <main>
         <section id="total-canvas">
           <section class="top-bar">
-            <button type="submit" class="toolbar-button" id="save-image">&nbsp; <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <button type="submit" class="toolbar-button" id="save-image" onclick="saveImage()">&nbsp; <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64" fill="none">
               <rect width="64" height="64" fill="url(#pattern0_38_36)"/>
               <defs>
               <pattern id="pattern0_38_36" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -31,8 +30,14 @@
               <image id="image0_38_36" width="90" height="90" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAACWElEQVR4nO2dS24TQRRFzwhnBwSS/SAG7ASSYcwOwsYIjAKLIBmjIOGMLmqpkCzLbXc7Xf97pCdFtlV+dXTrRfagDMYY0zSvgC/AA/ALuA2PmYW5BbRTw2NmYR72iH605eXRSBmLrhM50RbdFHKiLbop5ERbdFPIibboppATbdFROQOuge/AnwOJ00I1Ruz3Hfb2DbgCViTmEviZYJMqQPR2/Qh7T5bk1JJViOj/spMk+zrD5lSQ6KE+pRA9zOTeRd+lEP1k0QwOopMjQaqoH4vGonGiKziqKqwfjw4sGie6gqOqwvrx6MCicaIrOKoqrB+PDiwaJ7qCo6rC+vHowKJxois4qiqsH48OLBonuoKjqsL68ejAonGiKziqKqwfjw4sGic64lF9Bm6A81DD35sFR8dmz/rPPY6Omz1rvz8ge04/m7DWLuseRZ+PrP8O+PsC0UNqP4y89rVFH5c9xlTJA297FL0+8j67Y+RYP2PjYpvPPYreTBCzLftQP3PX6kq0Jhz17TEyxpw1luw9Oks2qxlpPOW5GEmuVrQmpvIUYiS5atGKIDum5KpFa0HZsSVXL1oLyE4huQnReoHsVJKbEa0TZKeU3JRozZCdWnJzojVBdg7JTYrWAdm5JDcrWuHT3fBF1JtQ60if+LoXrYxSu0q0CiuLxqLJnUInmvziPDrIL9UzGovOnjg50WSXVMXoyHWnkgqq3y3fEqaCKsktYVcFbFSZ62MK0atwm6E6rfuUPx112anse+CCxKzC1ZF3jf+DfAK+hnHhH0EzxhhjjDHG0Bz/ABEplfZGK5WSAAAAAElFTkSuQmCC"/>
               </defs>
               </svg></button>
-            <button type="submit" class="toolbar-button" id="undo-button" onclick="undoLastStroke()">&nbsp; <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" fill="none">
-              <path d="M22.6585 3.67716e-05C28.7021 0.0108893 34.1892 2.39242 38.2404 6.26394L41.4975 3.00682C42.8764 1.62801 45.234 2.60455 45.234 4.55454V16.7804C45.234 17.9892 44.2541 18.9691 43.0453 18.9691H30.8194C28.8694 18.9691 27.8929 16.6116 29.2717 15.2327L33.0792 11.4252C30.2645 8.78966 26.6223 7.32977 22.7529 7.29639C14.3264 7.22362 7.22349 14.0429 7.29635 22.7491C7.36548 31.008 14.0612 37.9382 22.617 37.9382C26.3677 37.9382 29.9125 36.5996 32.7061 34.1484C33.1386 33.769 33.7919 33.792 34.1988 34.1989L37.8159 37.8159C38.2602 38.2603 38.2382 38.9846 37.7719 39.4058C33.7615 43.0282 28.4469 45.234 22.617 45.234C10.126 45.234 9.11982e-05 35.1081 6.12624e-10 22.6172C-9.1197e-05 10.1406 10.1818 -0.0223066 22.6585 3.67716e-05Z" fill="black"/>
+            <button type="submit" class="toolbar-button" id="undo-button" onclick="undoLastStroke()">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="101" height="101" viewBox="0 0 101 101" fill="none">
+              <rect x="0.617004" y="0.616943" width="100" height="100" fill="url(#pattern0_84_2)"/>
+              <defs>
+              <pattern id="pattern0_84_2" patternContentUnits="objectBoundingBox" width="1" height="1">
+              <use xlink:href="#image0_84_2" transform="scale(0.01)"/>
+              </pattern>
+              <image id="image0_84_2" width="100" height="100" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEoklEQVR4nO2dfcheYxjAfzMfk69iJ7xMa+Ujkpl8FVpb5Htoi0Yiiygtbwv5g/EH849QMlKyIl+R1JqN/EGxpRhNqzVEJpOvma+x3bpyPb2nt+d53/Occ59z3/c516+uf956676eX899rnOd6z4PGIZhGIZhGIYRiJOAR4FngcvMQlhuAP4AXC7uMCnNsy/w5DgRvfgJmGJSmuNo4IMBMnpxmAlphnOB7yaR4YDMhNTPzcCuAjKcCamXA4EXC4pwJqRejgU+G1KGs29IPVwK/FxChjMhfpGS9S5gd0kZzoT4Q8rVNRVEOBPij1OBLzzIcPYNqc51wO+eZDgTUp79gMc8inAmpDxHFWiBmJCGOK9gC8SERNYCMSE1t0BeqlmEs2tIvS0QExJZC8SEeGQq8CCwp2EZDnhOy+kVGg9oO0biNuAa4AJgDjATOIgOtEDWBhDhKoQUGlt13SuBO4GFKi1pYT5bIDHFVmAVsBQ4B5hGAtwI/BnBh+caCMnzfeBe4EzdoqNqgayM4ENyAWO7fgbzQ8upswWSamzTYmJW21ogqcdu4E3g7Cae6i0D/okgaZdIvAOcUVcL5OUIEnQJxh5tH83wJWN/4JMIEnOJxw7gdmCvqkJGI0imTfEuMFJFyFMRJNG2+F5L5VLcEkECbYxdelM9NHtrtRA6AdfSC/49ZaWsCNTF7ULcTUmuBn6LIAHXwpDH3KU4HtgUQQKuhdeUuWWlHAy8FkESroXV10iVVsrSBqZJuhZrq56XnK9t6NCJuBZFqXI4j7Xj8SrkB+CQWGd2uxoPUePB/ibiDeBVYF0u3gM+Aj4FvtYGn0sk5DM8IuWhh6zg2qbqhMwsfS5+pRYnjwCvAB9GdE28H48cCqyOUEhRjgQu1LmuF/Teq+lOxXbfky4+zg6GEtKP6cAi7YB/2ZAU6Y5452J9H0nqQsZzArC8ZjmvUxOyZ3/cMiE95CngPB2q813Q/OWjBB6E7IfPtFBInkw74z6HB6+gZm4F/m6pkB4z9Frjo7X0OA1wFvBNi4X0OA34vGJucs6mEaZ7nJjPiJdpuo2VrTbl/w5oarFyo/awhxo/I34uAn4pmV8tA3cTcRXwa8uFCCeX3KpvIgBVnkZmpHX+8tsh85MtL6mTuxlpceKQ5zDlHicoo0MOdmekx/nAvwXzk+51cIY5+pCRJstjK30nY0SPkbmWCpGZt/UF8pPHGdGwj96tugmitn5PA8wpsHXJThEd1wI7+yx2C+nz9CRC5P4l2jp+U26hO/XimDrHaGd3kBCZGI26FXG5vpVOnuy1hYk64T+GXlwXOWUCIXIjaQRgQwpVVpcYHSBkY+iFdZWZA4S8HXphXearPkKeD72oLrOqjxD5zS0jEEv6CJH5NiMQx/URIi9WMwIxpc8Y0exQizH+Z/M4IXKM0AjI6tg7vV3jiZwQ+X0VIzDLYhhwMMa4Pidkce7vRiAW5YTIhIoRmEtUxo7YXkfbVeapkLdCL8QYOx3g9KXNRgTMViGl3zxn+OV0ndyU0VojAubqgKARCXJy+b7QizDGWNjE68qN4izQuV8jEg4PvQDDMAzDMKiP/wD5l+POfTnY7gAAAABJRU5ErkJggg=="/>
+              </defs>
               </svg></button>
             <button type="submit" class="toolbar-button" id="eraser" onclick="eraseMode()">&nbsp; <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="56" height="56" viewBox="0 0 56 56" fill="none">
               <rect width="56" height="56" fill="url(#pattern0_38_15)"/>
@@ -71,17 +76,17 @@
         </section>
       </main>
       <section id="loading-methods">
-        <button type="submit" class="loading">Circles</button>
+        <button type="submit" class="loading" id="circle-button" onclick="chooseCircle()">Circles</button>
         <p class="spacer">|</p>
-        <button type="submit" class="loading">Pixels</button>
+        <button type="submit" class="loading" id="pixel-button" onclick="choosePixel()">Pixels</button>
         <p class="spacer">|</p>
-        <button type="submit" class="loading">Wavy</button>
+        <button type="submit" class="loading" id="wavy-button" onclick="chooseWavy()">Wavy</button>
         <p class="spacer">|</p>
-        <button type="submit" class="loading">Opacity</button>
+        <button type="submit" class="loading" id="opacity-button" onclick="chooseOpacity()">Opacity</button>
         <p class="spacer">|</p>
-        <button type="submit" class="loading">Puzzle</button>
+        <button type="submit" class="loading" id="puzzle-button" onclick="choosePuzzle()">Puzzle</button>
       </section>
-      <button type="submit" class="toolbar-button" id="reveal-button" onclick="getImage()">Reveal</button>
+      <button type="submit" class="toolbar-button" id="reveal-button" onclick="getImage()"><b>Reveal</b></button>
     <script src="reveal_1.js"></script>
     <script src="reveal_2.js"></script>
     <script src="reveal_3.js"></script>

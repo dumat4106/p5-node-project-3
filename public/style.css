@@ -2,6 +2,13 @@ html, body {
   margin: 0;
   padding: 0;
   background-color:#cac8dc;
+
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+body::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, and Opera */
 }
 
 canvas {
@@ -91,7 +98,7 @@ body {
 #overlay {
   position: fixed; 
   width: 90%;
-  height: 90%;
+  height: 92%;
 
   top: 35px;
 
@@ -101,34 +108,62 @@ body {
   justify-content: center;
   align-items: center;
 
-  background-color: blue;
+
+  background-color: #cac8dc;
+  border-radius: 20px;
+}
+
+#opacity-overlay {
+  position: absolute;
+  width: 100vw;
+  height: 2000px;
+  background-color:#3f3c5783;
 }
 
 #next-Button {
   position: absolute; 
-  right: 0px;
+  right: 5px;
   top: 250px;
 
   width: 50px;
+
+  color: white;
+  background-color:#5C49EC;
+  border: none;
+
+  border-radius: 10px;
+
+  font-size: 20px;
+  
 }
 
 #close-button-overlay {
   position: absolute;
-  right: 0px;
-  top: 0px;
+  right: 10px;
+  top: 10px;
   width: 30px;
+  height: 30px;
+  border-radius: 10px;
+
+  color: white;
+  background-color:#5C49EC;
+  border: none;
 }
 
 #combined {
   position: absolute; 
-  top: 0px;
-  left: 300px;
+  top: 20px;
+  left: 70px;
+
+  font-size: 15px;
 }
 
 #player-view {
   position: absolute; 
-  top: 0px;
-  left: 750px;
+  top: 20px;
+  left: 580px;
+
+  font-size: 15px;
 }
 
 .toolbar-button{
@@ -138,6 +173,8 @@ body {
   
   width: 50px;
   height: 50px;
+
+
 }
 
 .container svg {
@@ -205,6 +242,14 @@ body {
   cursor: pointer;
 }
 
+#current-color {
+  border: 1px solid;
+
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
 #close-button { 
   position: absolute;
   bottom: 10px;
@@ -215,6 +260,8 @@ body {
 
 #color-wheel {
   width: 200px;
+
+  border: none;
 }
 
 #brush-overlay {
@@ -228,7 +275,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
 }
 
 #brush-one, #brush-two, #brush-three, #brush-four {
@@ -260,7 +307,13 @@ body {
 
 #reveal-button {
   margin-bottom: 20px;
-  width: 75px; 
+  width: 100px; 
   height: 50px;
+  border-radius: 20px;
+  border: none;
+
+  color: white;
+
+  background-color:#5C49EC;
 }
 

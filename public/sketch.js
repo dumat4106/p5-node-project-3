@@ -44,6 +44,14 @@ let showAllColors = false;
 
 let canvasElt;
 
+let opacityOverlay;
+
+let circleEffect = true;
+let pixelEffect = false;
+let wavyEffect = false;
+let opacityEffect = false; 
+let puzzleEffect = false; 
+
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
@@ -325,6 +333,10 @@ function getImage() {
   // Restore the previous state
   showAllColors = previousShowAllColors;
 
+  opacityOverlay = document.createElement("div");
+  opacityOverlay.setAttribute("id", "opacity-overlay");
+  document.body.appendChild(opacityOverlay);
+
   overlay = document.createElement("div");
   overlay.setAttribute("id", "overlay");
   document.body.appendChild(overlay);
@@ -361,8 +373,17 @@ function getImage() {
   playerView.setAttribute("id", "player-view");
   overlay.appendChild(playerView);
 
-
-  startPuzzleEffect(completedImage, "effect-output");
+  if (circleEffect) {
+    startParticleEffect(completedImage, "effect-output");
+  } else if (pixelEffect) {
+    startPixelEffect(completedImage, "effect-output");
+  } else if (wavyEffect) {
+    startWavyEffect(completedImage, "effect-output");
+  } else if (opacityEffect) {
+    startOpacityEffect(completedImage, "effect-output");
+  } else {
+    startPuzzleEffect(completedImage, "effect-output");
+  }
 
   userIds = Object.keys(userStrokes);
   currentViewIndex = 0;
@@ -392,7 +413,7 @@ function showUserDrawing(index) {
     }
   }
 
-  playerView.textContent = "Viewing:" + userId;
+  playerView.textContent = "Viewing: " + userId;
 
 }
 
@@ -599,7 +620,7 @@ function chooseBrushOne() {
     brushThree.style.backgroundColor = "";
     brushFour.style.backgroundColor = "";
 
-    brushSize = 8;
+    brushSize = 1;
     
     brushOne.style.backgroundColor = "#E3E1FF";
 }
@@ -610,7 +631,7 @@ function chooseBrushTwo() {
   brushThree.style.backgroundColor = "";
   brushFour.style.backgroundColor = "";
 
-  brushSize = 16;
+  brushSize = 8;
   
   brushTwo.style.backgroundColor = "#E3E1FF";
 }
@@ -621,7 +642,7 @@ function chooseBrushThree() {
   brushThree.style.backgroundColor = "";
   brushFour.style.backgroundColor = "";
 
-  brushSize = 36;
+  brushSize = 16;
   
   brushThree.style.backgroundColor = "#E3E1FF";
 }
@@ -632,7 +653,7 @@ function chooseBrushFour() {
   brushThree.style.backgroundColor = "";
   brushFour.style.backgroundColor = "";
 
-  brushSize = 50;
+  brushSize = 36;
   
   brushFour.style.backgroundColor = "#E3E1FF";
 }
@@ -643,9 +664,144 @@ function closeOverlay() {
     overlay = null;
   }
 
+  if (opacityOverlay && opacityOverlay.parentNode) {
+    opacityOverlay.parentNode.removeChild(opacityOverlay);
+    opacityOverlay = null;
+  }
+
   // Optional: reattach the canvas back to original parent if needed
   const canvasParent = document.getElementById("drawing-canvas");
   if (canvasElt && canvasParent) {
     canvasParent.appendChild(canvasElt);
   }
+}
+
+let circleButton;
+let pixelButton;
+let wavyButton;
+let opacityButton;
+let puzzleButton;
+
+function chooseCircle () {
+
+  circleEffect = true;
+  pixelEffect = false;
+  wavyEffect = false;
+  opacityEffect = false; 
+  puzzleEffect = false; 
+
+  circleButton = document.getElementById("circle-button");
+  circleButton.style.backgroundColor = "#595670";
+
+  pixelButton = document.getElementById("pixel-button");
+  pixelButton.style.backgroundColor = "";
+
+  wavyButton = document.getElementById("wavy-button");
+  wavyButton.style.backgroundColor = "";
+
+  opacityButton = document.getElementById("opacity-button");
+  opacityButton.style.backgroundColor = "";
+
+  puzzleButton = document.getElementById("puzzle-button");
+  puzzleButton.style.backgroundColor = "";
+}
+
+function choosePixel () {
+
+  circleEffect = false;
+  pixelEffect = true;
+  wavyEffect = false;
+  opacityEffect = false; 
+  puzzleEffect = false; 
+
+  circleButton = document.getElementById("circle-button");
+  circleButton.style.backgroundColor = "";
+
+  pixelButton = document.getElementById("pixel-button");
+  pixelButton.style.backgroundColor = "#595670";
+
+  wavyButton = document.getElementById("wavy-button");
+  wavyButton.style.backgroundColor = "";
+
+  opacityButton = document.getElementById("opacity-button");
+  opacityButton.style.backgroundColor = "";
+
+  puzzleButton = document.getElementById("puzzle-button");
+  puzzleButton.style.backgroundColor = "";
+}
+
+function chooseWavy () {
+
+  circleEffect = false;
+  pixelEffect = false;
+  wavyEffect = true;
+  opacityEffect = false; 
+  puzzleEffect = false; 
+
+  circleButton = document.getElementById("circle-button");
+  circleButton.style.backgroundColor = "";
+
+  pixelButton = document.getElementById("pixel-button");
+  pixelButton.style.backgroundColor = "";
+
+  wavyButton = document.getElementById("wavy-button");
+  wavyButton.style.backgroundColor = "#595670";
+
+  opacityButton = document.getElementById("opacity-button");
+  opacityButton.style.backgroundColor = "";
+
+  puzzleButton = document.getElementById("puzzle-button");
+  puzzleButton.style.backgroundColor = "";
+}
+
+function chooseOpacity () {
+
+  circleEffect = false;
+  pixelEffect = false;
+  wavyEffect = false;
+  opacityEffect = true; 
+  puzzleEffect = false; 
+
+  circleButton = document.getElementById("circle-button");
+  circleButton.style.backgroundColor = "";
+
+  pixelButton = document.getElementById("pixel-button");
+  pixelButton.style.backgroundColor = "";
+
+  wavyButton = document.getElementById("wavy-button");
+  wavyButton.style.backgroundColor = "";
+
+  opacityButton = document.getElementById("opacity-button");
+  opacityButton.style.backgroundColor = "#595670";
+
+  puzzleButton = document.getElementById("puzzle-button");
+  puzzleButton.style.backgroundColor = "";
+}
+
+function choosePuzzle () {
+
+  circleEffect = false;
+  pixelEffect = false;
+  wavyEffect = false;
+  opacityEffect = false; 
+  puzzleEffect = true; 
+
+  circleButton = document.getElementById("circle-button");
+  circleButton.style.backgroundColor = "";
+
+  pixelButton = document.getElementById("pixel-button");
+  pixelButton.style.backgroundColor = "";
+
+  wavyButton = document.getElementById("wavy-button");
+  wavyButton.style.backgroundColor = "";
+
+  opacityButton = document.getElementById("opacity-button");
+  opacityButton.style.backgroundColor = "";
+
+  puzzleButton = document.getElementById("puzzle-button");
+  puzzleButton.style.backgroundColor = "#595670";
+}
+
+function saveImage() {
+  saveCanvas('myArtwork', 'png');
 }
