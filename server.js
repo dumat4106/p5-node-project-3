@@ -40,10 +40,6 @@ function User(socketId) {
 //when a connection is made 
 io.sockets.on('connection', newConnection);
 
-socket.on("erase", (data) => {
-    socket.broadcast.emit("erase", data);
-  });
-
 function newConnection(socket) {
 
     var user = new User(socket.id);
@@ -65,5 +61,8 @@ function newConnection(socket) {
         console.log(data);
     }
 
+    socket.on("erase", (data) => {
+        socket.broadcast.emit("erase", data);
+      });
     
 }

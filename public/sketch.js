@@ -24,6 +24,8 @@ let dragging = false;
 let pickerRadius = 15;
 
 let isErasing = false;
+let eraserBtn;
+
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
@@ -178,6 +180,12 @@ function draw() {
     hoveredColor.style.backgroundColor = colorToCSS([r, g, b]);
   }
 
+  const currentColor = document.getElementById("current-color");
+
+  if (currentColor) {
+    currentColor.style.backgroundColor = colorToCSS([r, g, b]);
+  }
+
 }
 
 function mousePressed(){
@@ -321,6 +329,14 @@ function closeColorOverlay() {
 
 function eraseMode() {
   isErasing = !isErasing;
+
+  eraserBtn = document.getElementById("eraser");
+  if (isErasing) {
+    eraserBtn.style.backgroundColor = "#E3E1FF";
+  }
+  else {
+    eraserBtn.style.backgroundColor = "";
+  }
 }
 
 function redrawAllStrokes() {
