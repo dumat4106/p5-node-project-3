@@ -15,6 +15,7 @@
 
   <body>
       <header>
+        <p id="title">p5.paint</p>
         <p id="username">You are: </p>
       </header>
 
@@ -30,7 +31,7 @@
               <image id="image0_38_36" width="90" height="90" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAACWElEQVR4nO2dS24TQRRFzwhnBwSS/SAG7ASSYcwOwsYIjAKLIBmjIOGMLmqpkCzLbXc7Xf97pCdFtlV+dXTrRfagDMYY0zSvgC/AA/ALuA2PmYW5BbRTw2NmYR72iH605eXRSBmLrhM50RbdFHKiLbop5ERbdFPIibboppATbdFROQOuge/AnwOJ00I1Ruz3Hfb2DbgCViTmEviZYJMqQPR2/Qh7T5bk1JJViOj/spMk+zrD5lSQ6KE+pRA9zOTeRd+lEP1k0QwOopMjQaqoH4vGonGiKziqKqwfjw4sGie6gqOqwvrx6MCicaIrOKoqrB+PDiwaJ7qCo6rC+vHowKJxois4qiqsH48OLBonuoKjqsL68ejAonGiKziqKqwfjw4sGic64lF9Bm6A81DD35sFR8dmz/rPPY6Omz1rvz8ge04/m7DWLuseRZ+PrP8O+PsC0UNqP4y89rVFH5c9xlTJA297FL0+8j67Y+RYP2PjYpvPPYreTBCzLftQP3PX6kq0Jhz17TEyxpw1luw9Oks2qxlpPOW5GEmuVrQmpvIUYiS5atGKIDum5KpFa0HZsSVXL1oLyE4huQnReoHsVJKbEa0TZKeU3JRozZCdWnJzojVBdg7JTYrWAdm5JDcrWuHT3fBF1JtQ60if+LoXrYxSu0q0CiuLxqLJnUInmvziPDrIL9UzGovOnjg50WSXVMXoyHWnkgqq3y3fEqaCKsktYVcFbFSZ62MK0atwm6E6rfuUPx112anse+CCxKzC1ZF3jf+DfAK+hnHhH0EzxhhjjDHG0Bz/ABEplfZGK5WSAAAAAElFTkSuQmCC"/>
               </defs>
               </svg></button>
-            <button type="submit" class="toolbar-button" id="undo-button">&nbsp; <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" fill="none">
+            <button type="submit" class="toolbar-button" id="undo-button" onclick="undoLastStroke()">&nbsp; <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" fill="none">
               <path d="M22.6585 3.67716e-05C28.7021 0.0108893 34.1892 2.39242 38.2404 6.26394L41.4975 3.00682C42.8764 1.62801 45.234 2.60455 45.234 4.55454V16.7804C45.234 17.9892 44.2541 18.9691 43.0453 18.9691H30.8194C28.8694 18.9691 27.8929 16.6116 29.2717 15.2327L33.0792 11.4252C30.2645 8.78966 26.6223 7.32977 22.7529 7.29639C14.3264 7.22362 7.22349 14.0429 7.29635 22.7491C7.36548 31.008 14.0612 37.9382 22.617 37.9382C26.3677 37.9382 29.9125 36.5996 32.7061 34.1484C33.1386 33.769 33.7919 33.792 34.1988 34.1989L37.8159 37.8159C38.2602 38.2603 38.2382 38.9846 37.7719 39.4058C33.7615 43.0282 28.4469 45.234 22.617 45.234C10.126 45.234 9.11982e-05 35.1081 6.12624e-10 22.6172C-9.1197e-05 10.1406 10.1818 -0.0223066 22.6585 3.67716e-05Z" fill="black"/>
               </svg></button>
             <button type="submit" class="toolbar-button" id="eraser" onclick="eraseMode()">&nbsp; <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="56" height="56" viewBox="0 0 56 56" fill="none">
@@ -42,7 +43,7 @@
               <image id="image0_38_15" width="90" height="90" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAYAAAA4qEECAAAACXBIWXMAAAsTAAALEwEAmpwYAAACxElEQVR4nO2dTW4TQRCF3wKXB6+Si/GzIpwk25FyAthEMZG4AwjbHCIBhQ0SAVaEYxi11JaskZm07Znuqur3SSVFchz3fHqazFR3jwFCCCGEEEIIIdmYAHgJ4BrAVwB/ATzEn6/ja+F3yBG8BvATwPqRugdwdswH1coTAG8TBHdrDkBKD94KDYDlAZI3tYx/g/QQ0vjxCMmb+gzgad8H1YwMJJmyM0qm7IySKTujZMpGPslVy5bMkquULYUkVyVbCkuuQrYA+KBAsmvZokyyS9miVLIr2Q2AhQKZKY0os10/UZ7kbr2HQaZGktytMNFgBjGW5O36beUUMjWa5O16AeWI4SRvV5jwVYs4kRzqFkoRR5LXcSmDOsSZ5FB/oAxxKDnUDRQhTiVv1oaoYOrgEq6vnkMBnpO8BvBLww1LSpIXAC4UCDu0XllI8mprKda5Amn71qWGJH9KSHLTeV+rQJ6ZNum+Se5iIdl94zch2YJsN5I1y3YnWaNst5I1yXYvWYPsaiSXlF2d5BKyi0ueJNyMjLn5ps0gWcXmocuEVTxjD/Lcc5IRGyhaktB6TXLYMPm9cJLHTLaKJCM2tzUmofWS5A3z/wzyDsCs8NhaL5IRJyA1r9JpPUhGnFLfNdgT6KG1LrlP9Cl0cWFZsoVTR+ocpWrJgSvF/wzdSA486zmARTxQzdsxlhYkp9ywlLrgl0INrqK34Ltmtsek8ZTkfZtKudIjHpPcbZOmrD4a8wAbz0nWkibxnmQNBywJG/BdSd5H9lDtU6lVck7ZUrvkHLKFkseXLZQ8frKFkseXLZQ8bCdttuO9s4QHurq4Gckp+y72s09ihQdof6Pk8juyVkzy+LJXlDzMaWTNc/JwEwdvDpB8pWHDpEXO4hcZPCb4h4bNktaZxKuNdwC+xOddPMQHjMzj8jN+fQchhBBCCCGEIBP/AJivPp1EVLJpAAAAAElFTkSuQmCC"/>
               </defs>
               </svg></button>
-            <button type="submit" class="toolbar-button" id="brush-size">&nbsp; <svg xmlns="http://www.w3.org/2000/svg" width="57" height="21" viewBox="0 0 57 21" fill="none">
+            <button type="submit" class="toolbar-button" id="brush-size" onclick="changeBrushSize()">&nbsp; <svg xmlns="http://www.w3.org/2000/svg" width="57" height="21" viewBox="0 0 57 21" fill="none">
               <line x1="-0.00439453" y1="10" x2="57.0044" y2="10" stroke="black" stroke-width="3"/>
               <line x1="-0.00439453" y1="18" x2="57.0044" y2="18" stroke="black" stroke-width="5"/>
               <line x1="-0.00439453" y1="1.5" x2="57.0044" y2="1.5" stroke="black" stroke-width="2"/>

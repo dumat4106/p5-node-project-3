@@ -4,9 +4,11 @@ var userNumber;
 var playerNumber;
 
 let isColorOverlayOpen = false;
+let isBrushSizeOpen = false;
 
 //for the user functionality 
 let userStrokes = {}; 
+let currentStroke = []; // holds the current stroke while dragging
 let currentViewIndex = 0;
 let userIds = [];
 
@@ -26,6 +28,13 @@ let pickerRadius = 15;
 let isErasing = false;
 let eraserBtn;
 
+let lastMouseX, lastMouseY;
+let lastTime = 0;
+
+let brushSize = 36;
+let brushOverlay;
+let brushOne, brushTwo, brushThree, brushFour;
+
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
@@ -34,6 +43,8 @@ function preload() {
 function setup() {
   createCanvas(500, 500).parent("drawing-canvas");
   background(251);
+
+  disableTouchScrollOnCanvas();
 
   tempCanvas = createGraphics(350, 350);
   tempCanvas.background(51);
@@ -78,6 +89,7 @@ function setup() {
   });
 }
 
+/*
 function newDrawing(data) {
 
   if (!userStrokes[data.user]) {
@@ -89,7 +101,18 @@ function newDrawing(data) {
   fill(55);
   ellipse(data.x, data.y, 36, 36);
 }
+*/
+function newDrawing(data) {
+  if (!userStrokes[data.user]) {
+    userStrokes[data.user] = [];
+  }
+  userStrokes[data.user].push(data);
 
+  noStroke();
+  fill(55, 255 * data.pressure); 
+  ellipse(data.x, data.y, brushSize * data.pressure + 10, brushSize * data.pressure + 10);
+}
+/*
 function mouseDragged() {
 
   if (isColorOverlayOpen) return;
@@ -130,8 +153,70 @@ function mouseDragged() {
       userStrokes[userNumber].push({ x: mouseX, y: mouseY });
     }
 }
+*/
 
+function mouseDragged() {
+  if (isColorOverlayOpen) return;
+  const eraseRadius = 20;
 
+  let now = millis();
+  let dt = now - lastTime;
+  let dx = mouseX - lastMouseX;
+  let dy = mouseY - lastMouseY;
+  let speed = dist(mouseX, mouseY, lastMouseX, lastMouseY) / (dt || 1);
+
+  let pressure = map(speed, 0, 5, 1, 0);
+  pressure = constrain(pressure, 0.1, 1);
+
+  if (isErasing) {
+    userStrokes[userNumber] = userStrokes[userNumber].filter(stroke => {
+      return dist(mouseX, mouseY, stroke.x, stroke.y) > eraseRadius;
+    });
+
+    socket.emit("erase", {
+      x: mouseX,
+      y: mouseY,
+      user: userNumber,
+      radius: eraseRadius
+    });
+
+    redrawAllStrokes();
+  } else {
+    let numSteps = int(dist(mouseX, mouseY, lastMouseX, lastMouseY) / 2);
+    for (let i = 0; i <= numSteps; i++) {
+      let t = i / numSteps;
+      let x = lerp(lastMouseX, mouseX, t);
+      let y = lerp(lastMouseY, mouseY, t);
+      let p = pressure;
+
+      noStroke();
+      fill(55, 255 * p);
+      ellipse(x, y, brushSize * p + 10, brushSize * p + 10);
+
+      // Save the stroke
+      let strokeData = {
+        x: x,
+        y: y,
+        user: userNumber,
+        pressure: p
+      };
+
+      socket.emit('mouse', strokeData);
+
+      if (!userStrokes[userNumber]) {
+        userStrokes[userNumber] = [];
+      }
+      if (!currentStroke) currentStroke = [];
+
+      currentStroke.push({ x, y, pressure });
+      userStrokes[userNumber].push(strokeData);
+    }
+  }
+
+  lastMouseX = mouseX;
+  lastMouseY = mouseY;
+  lastTime = now;
+}
 
 function colorToCSS(c) {
   return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
@@ -198,8 +283,22 @@ function mousePressed(){
 
 function mouseReleased() {
   dragging = false;
+
+  if (currentStroke.length > 0) {
+    if (!userStrokes[userNumber]) {
+      userStrokes[userNumber] = [];
+    }
+    userStrokes[userNumber].push(currentStroke);
+    currentStroke = [];
+  }
 }
 
+function undoLastStroke() {
+  if (userStrokes[userNumber] && userStrokes[userNumber].length > 0) {
+    userStrokes[userNumber].pop(); // Remove last stroke
+    redrawAllStrokes(); // Re-render everything
+  }
+}
 
 function getImage() {
 
@@ -241,7 +340,7 @@ function showUserDrawing(index) {
 
   if (strokes) {
     for (let s of strokes) {
-      ellipse(s.x, s.y, 36, 36);
+      ellipse(s.x, s.y, brushSize * p + 10, brushSize * p + 10);
     }
   }
 
@@ -265,6 +364,7 @@ function nextUser() {
 
 //when user clicks on color wheel
 function showColorOverlay() {
+
   isColorOverlayOpen = true;
 
   colorOverlay = document.createElement("div");
@@ -339,6 +439,7 @@ function eraseMode() {
   }
 }
 
+/*
 function redrawAllStrokes() {
   clear();
   background(251); // your background color
@@ -349,4 +450,107 @@ function redrawAllStrokes() {
       ellipse(s.x, s.y, 36, 36);
     }
   }
+}
+  */
+
+function redrawAllStrokes() {
+  clear();
+  background(251);
+  for (let user in userStrokes) {
+    for (let s of userStrokes[user]) {
+      let p = s.pressure || 1;
+      fill(55, 255 * p);
+      noStroke();
+      ellipse(s.x, s.y, brushSize * p + 10, brushSize * p + 10);
+    }
+  }
+}
+
+function disableTouchScrollOnCanvas() {
+  const canvasElt = document.querySelector("canvas");
+
+  ['pointerdown', 'pointermove', 'touchstart', 'touchmove'].forEach(evt => {
+    canvasElt.addEventListener(evt, (e) => {
+      e.preventDefault();
+    }, { passive: false });
+  });
+}
+
+function changeBrushSize() {
+
+  if (!isBrushSizeOpen) {
+    brushOverlay = document.createElement("div");
+    brushOverlay.setAttribute("id", "brush-overlay");
+    document.getElementById("drawing-canvas").appendChild(brushOverlay);
+  
+    brushOne = document.createElement("button");
+    brushOne.setAttribute("id", "brush-one");
+    brushOne.addEventListener("click", chooseBrushOne);
+    brushOverlay.appendChild(brushOne);
+  
+    brushTwo = document.createElement("button");
+    brushTwo.setAttribute("id", "brush-two");
+    brushTwo.addEventListener("click", chooseBrushTwo);
+    brushOverlay.appendChild(brushTwo);
+  
+    brushThree = document.createElement("button");
+    brushThree.setAttribute("id", "brush-three");
+    brushThree.addEventListener("click", chooseBrushThree);
+    brushOverlay.appendChild(brushThree);
+  
+    brushFour = document.createElement("button");
+    brushFour.setAttribute("id", "brush-four");
+    brushFour.addEventListener("click", chooseBrushFour);
+    brushOverlay.appendChild(brushFour);
+
+    isBrushSizeOpen = true;
+  } else {
+    brushOverlay.parentNode.removeChild(brushOverlay);
+    isBrushSizeOpen = false;
+  }
+  
+}
+
+function chooseBrushOne() {
+    brushOne.style.backgroundColor = "";
+    brushTwo.style.backgroundColor = "";
+    brushThree.style.backgroundColor = "";
+    brushFour.style.backgroundColor = "";
+
+    brushSize = 10;
+    
+    brushOne.style.backgroundColor = "#E3E1FF";
+}
+
+function chooseBrushTwo() {
+  brushOne.style.backgroundColor = "";
+  brushTwo.style.backgroundColor = "";
+  brushThree.style.backgroundColor = "";
+  brushFour.style.backgroundColor = "";
+
+  brushSize = 24;
+  
+  brushTwo.style.backgroundColor = "#E3E1FF";
+}
+
+function chooseBrushThree() {
+  brushOne.style.backgroundColor = "";
+  brushTwo.style.backgroundColor = "";
+  brushThree.style.backgroundColor = "";
+  brushFour.style.backgroundColor = "";
+
+  brushSize = 36;
+  
+  brushThree.style.backgroundColor = "#E3E1FF";
+}
+
+function chooseBrushFour() {
+  brushOne.style.backgroundColor = "";
+  brushTwo.style.backgroundColor = "";
+  brushThree.style.backgroundColor = "";
+  brushFour.style.backgroundColor = "";
+
+  brushSize = 40;
+  
+  brushFour.style.backgroundColor = "#E3E1FF";
 }
