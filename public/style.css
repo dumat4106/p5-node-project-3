@@ -93,7 +93,8 @@ body {
   width: 90%;
   height: 90%; 
 
-  top: 50px;
+  top: 40px;
+  left: 5%;
 
   display: flex;
   flex-direction: row; 
@@ -101,6 +102,33 @@ body {
   align-items: center;
 
   background-color: blue;
+}
+
+#next-Button {
+  position: absolute; 
+  right: 0px;
+  top: 250px;
+
+  width: 50px;
+}
+
+#close-button {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 30px;
+}
+
+#combined {
+  position: absolute; 
+  top: 0px;
+  left: 100px;
+}
+
+#player-view {
+  position: absolute; 
+  top: 0px;
+  left: 300px;
 }
 
 .toolbar-button{
@@ -187,4 +215,23 @@ body {
 
 #color-wheel {
   width: 200px;
+}
+
+#brush-overlay {
+  width: 50px;
+
+  position: absolute;
+  top: 0px;
+  left: 175px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+#brush-one, #brush-two, #brush-three, #brush-four {
+  width: 100%;
+  height: 20px;
 }

@@ -3,6 +3,7 @@ var completedImage;
 var userNumber;
 var playerNumber;
 
+let userId;
 let isColorOverlayOpen = false;
 let isBrushSizeOpen = false;
 
@@ -12,6 +13,7 @@ let currentStroke = []; // holds the current stroke while dragging
 let currentViewIndex = 0;
 let userIds = [];
 
+let p;
 let currentColor;
 let colorOverlay;
 let mouseColor;
@@ -35,6 +37,8 @@ let brushSize = 36;
 let brushOverlay;
 let brushOne, brushTwo, brushThree, brushFour;
 
+let playerView;
+
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
@@ -44,7 +48,7 @@ function setup() {
   createCanvas(500, 500).parent("drawing-canvas");
   background(251);
 
-  disableTouchScrollOnCanvas();
+  //disableTouchScrollOnCanvas();
 
   tempCanvas = createGraphics(350, 350);
   tempCanvas.background(51);
@@ -187,7 +191,7 @@ function mouseDragged() {
       let t = i / numSteps;
       let x = lerp(lastMouseX, mouseX, t);
       let y = lerp(lastMouseY, mouseY, t);
-      let p = pressure;
+      p = pressure;
 
       noStroke();
       fill(55, 255 * p);
@@ -322,7 +326,23 @@ function getImage() {
   let nextButton = document.createElement("button");
   nextButton.setAttribute("id", "next-Button");
   nextButton.addEventListener("click", nextUser);
+  nextButton.textContent = ">";
   overlay.appendChild(nextButton)
+
+  let closeButton = document.createElement("button");
+  closeButton.setAttribute("id", "close-button");
+  closeButton.textContent = "X";
+  overlay.appendChild(closeButton);
+
+  let combined = document.createElement("p");
+  combined.setAttribute("id", "combined");
+  combined.textContent ="Reveal!";
+  overlay.appendChild(combined);
+
+  playerView = document.createElement("p");
+  playerView.setAttribute("id", "player-view");
+  overlay.appendChild(playerView);
+
 
   startParticleEffect(completedImage, "effect-output");
 
@@ -335,7 +355,7 @@ function showUserDrawing(index) {
   clear();
   background(51);
   
-  const userId = userIds[index];
+  userId = userIds[index];
   const strokes = userStrokes[userId];
 
   if (strokes) {
@@ -344,10 +364,15 @@ function showUserDrawing(index) {
     }
   }
 
+  playerView.textContent = "Viewing:" + userId;
+
+  /*
   const usernameElement = document.getElementById("username");
   if (usernameElement) {
     usernameElement.innerText = "Viewing: " + userId;
   }
+    */
+
 }
 
 function nextUser() {
@@ -485,21 +510,25 @@ function changeBrushSize() {
   
     brushOne = document.createElement("button");
     brushOne.setAttribute("id", "brush-one");
+    brushOne.textContent = "8px";
     brushOne.addEventListener("click", chooseBrushOne);
     brushOverlay.appendChild(brushOne);
   
     brushTwo = document.createElement("button");
     brushTwo.setAttribute("id", "brush-two");
+    brushTwo.textContent = "16px";
     brushTwo.addEventListener("click", chooseBrushTwo);
     brushOverlay.appendChild(brushTwo);
   
     brushThree = document.createElement("button");
     brushThree.setAttribute("id", "brush-three");
+    brushThree.textContent = "32px";
     brushThree.addEventListener("click", chooseBrushThree);
     brushOverlay.appendChild(brushThree);
   
     brushFour = document.createElement("button");
     brushFour.setAttribute("id", "brush-four");
+    brushFour.textContent = "50px";
     brushFour.addEventListener("click", chooseBrushFour);
     brushOverlay.appendChild(brushFour);
 
@@ -517,7 +546,7 @@ function chooseBrushOne() {
     brushThree.style.backgroundColor = "";
     brushFour.style.backgroundColor = "";
 
-    brushSize = 10;
+    brushSize = 8;
     
     brushOne.style.backgroundColor = "#E3E1FF";
 }
@@ -528,7 +557,7 @@ function chooseBrushTwo() {
   brushThree.style.backgroundColor = "";
   brushFour.style.backgroundColor = "";
 
-  brushSize = 24;
+  brushSize = 16;
   
   brushTwo.style.backgroundColor = "#E3E1FF";
 }
@@ -550,7 +579,7 @@ function chooseBrushFour() {
   brushThree.style.backgroundColor = "";
   brushFour.style.backgroundColor = "";
 
-  brushSize = 40;
+  brushSize = 50;
   
   brushFour.style.backgroundColor = "#E3E1FF";
 }
