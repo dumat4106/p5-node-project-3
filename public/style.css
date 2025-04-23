@@ -254,8 +254,14 @@ body {
   position: absolute;
   bottom: 10px;
   right: 230px;
-  width: 40px;
+  width: 50px;
   height: 20px;
+
+  border-radius: 7px;
+
+  border: none;
+  color: white;
+  background-color:#5C49EC;
 }
 
 #color-wheel {

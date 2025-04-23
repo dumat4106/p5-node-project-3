@@ -52,9 +52,12 @@ let wavyEffect = false;
 let opacityEffect = false; 
 let puzzleEffect = false; 
 
+let demoImage;
+
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
+  //demoImage = loadImage("Images/demo-flowers.png");
 }
 
 function setup() {
@@ -205,6 +208,8 @@ function colorToCSS(c) {
 }
 
 function draw() {
+  //image(demoImage, 0, 0, 500, 500);
+
   tempCanvas.clear();
   tempCanvas.image(gradientImage, 0, 0); // draw your gradient
 
