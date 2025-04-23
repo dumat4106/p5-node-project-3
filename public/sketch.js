@@ -282,6 +282,41 @@ function mousePressed(){
     if (dist(mouseX, mouseY, pickerX, pickerY) < pickerRadius) {
       dragging = true;
     }
+  } else {
+    currentStroke = [];
+
+    const now = millis();
+    const pressure = 1; // Max pressure on tap
+    const x = mouseX;
+    const y = mouseY;
+  
+    // Draw the dot
+    noStroke();
+    fill(55, 255 * pressure);
+    ellipse(x, y, brushSize * pressure + 10, brushSize * pressure + 10);
+  
+    // Save the stroke
+    let strokeData = {
+      x: x,
+      y: y,
+      user: userNumber,
+      pressure: pressure
+    };
+  
+    socket.emit('mouse', strokeData);
+  
+    if (!userStrokes[userNumber]) {
+      userStrokes[userNumber] = [];
+    }
+    if (!currentStroke) currentStroke = [];
+  
+    currentStroke.push({ x, y, pressure });
+    userStrokes[userNumber].push(strokeData);
+  
+    // Update last mouse for next drag
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
+    lastTime = now;
   }
 }
 
@@ -330,7 +365,7 @@ function getImage() {
   overlay.appendChild(nextButton)
 
   let closeButton = document.createElement("button");
-  closeButton.setAttribute("id", "close-button");
+  closeButton.setAttribute("id", "close-button-overlay");
   closeButton.textContent = "X";
   overlay.appendChild(closeButton);
 
@@ -353,7 +388,7 @@ function getImage() {
 
 function showUserDrawing(index) {
   clear();
-  background(51);
+  background(251);
   
   userId = userIds[index];
   const strokes = userStrokes[userId];

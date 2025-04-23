@@ -91,10 +91,10 @@ body {
 #overlay {
   position: fixed; 
   width: 90%;
-  height: 90%; 
+  height: 90%;
 
-  top: 40px;
-  left: 5%;
+  top: 35px;
+
 
   display: flex;
   flex-direction: row; 
@@ -112,7 +112,7 @@ body {
   width: 50px;
 }
 
-#close-button {
+#close-button-overlay {
   position: absolute;
   right: 0px;
   top: 0px;
@@ -122,13 +122,13 @@ body {
 #combined {
   position: absolute; 
   top: 0px;
-  left: 100px;
+  left: 300px;
 }
 
 #player-view {
   position: absolute; 
   top: 0px;
-  left: 300px;
+  left: 750px;
 }
 
 .toolbar-button{
@@ -155,7 +155,7 @@ body {
 
   display: flex;
   flex-direction: column;
-  background-color:antiquewhite;
+  background-color:rgb(225, 225, 225);
 }
 
 #temp-canvas {
