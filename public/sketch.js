@@ -2,7 +2,6 @@ var socket;
 var completedImage;
 var userNumber;
 var playerNumber;
-
 let userId;
 let isColorOverlayOpen = false;
 let isBrushSizeOpen = false;
@@ -16,6 +15,7 @@ let userIds = [];
 let p;
 let currentColor;
 let colorOverlay;
+let overlay;
 let mouseColor;
 let tempCanvas;
 let gradientImage;
@@ -42,6 +42,8 @@ let playerView;
 
 let showAllColors = false;
 
+let canvasElt;
+
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
@@ -49,6 +51,7 @@ function preload() {
 
 function setup() {
   createCanvas(500, 500).parent("drawing-canvas");
+  
   background(251);
 
   //disableTouchScrollOnCanvas();
@@ -322,7 +325,7 @@ function getImage() {
   // Restore the previous state
   showAllColors = previousShowAllColors;
 
-  let overlay = document.createElement("div");
+  overlay = document.createElement("div");
   overlay.setAttribute("id", "overlay");
   document.body.appendChild(overlay);
   
@@ -332,7 +335,7 @@ function getImage() {
   overlay.appendChild(effectContainer);
 
   //canvas is now in effectContainer 
-  let canvasElt = document.querySelector("canvas");
+  canvasElt = document.querySelector("canvas");
   if (canvasElt) {
     effectContainer.appendChild(canvasElt);
   }
@@ -345,6 +348,7 @@ function getImage() {
 
   let closeButton = document.createElement("button");
   closeButton.setAttribute("id", "close-button-overlay");
+  closeButton.addEventListener("click", closeOverlay);
   closeButton.textContent = "X";
   overlay.appendChild(closeButton);
 
@@ -358,7 +362,7 @@ function getImage() {
   overlay.appendChild(playerView);
 
 
-  startParticleEffect(completedImage, "effect-output");
+  startPuzzleEffect(completedImage, "effect-output");
 
   userIds = Object.keys(userStrokes);
   currentViewIndex = 0;
@@ -631,4 +635,17 @@ function chooseBrushFour() {
   brushSize = 50;
   
   brushFour.style.backgroundColor = "#E3E1FF";
+}
+
+function closeOverlay() {
+  if (overlay && overlay.parentNode) {
+    overlay.parentNode.removeChild(overlay);
+    overlay = null;
+  }
+
+  // Optional: reattach the canvas back to original parent if needed
+  const canvasParent = document.getElementById("drawing-canvas");
+  if (canvasElt && canvasParent) {
+    canvasParent.appendChild(canvasElt);
+  }
 }
