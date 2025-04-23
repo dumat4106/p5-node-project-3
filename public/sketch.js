@@ -57,13 +57,15 @@ let demoImage;
 
 function preload() {
   gradientImage = loadImage('Images/Color_gradient.png');
-  //demoImage = loadImage("Images/demo-flowers.png");
+  demoImage = loadImage("Images/myArtwork (7).png");
 }
 
 function setup() {
   createCanvas(500, 500).parent("drawing-canvas");
   
   background(251);
+
+  image(demoImage, 0, 0, 500, 500);
 
   //disableTouchScrollOnCanvas();
 
@@ -208,7 +210,7 @@ function colorToCSS(c) {
 }
 
 function draw() {
-  //image(demoImage, 0, 0, 500, 500);
+  
 
   tempCanvas.clear();
   tempCanvas.image(gradientImage, 0, 0); // draw your gradient
@@ -620,6 +622,7 @@ function changeBrushSize() {
 }
 
 function chooseBrushOne() {
+  
     brushOne.style.backgroundColor = "";
     brushTwo.style.backgroundColor = "";
     brushThree.style.backgroundColor = "";
@@ -628,6 +631,8 @@ function chooseBrushOne() {
     brushSize = 1;
     
     brushOne.style.backgroundColor = "#E3E1FF";
+
+
 }
 
 function chooseBrushTwo() {
